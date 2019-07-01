@@ -1,7 +1,8 @@
 import './styles.css';
 import $ from 'jquery';
 import 'bootstrap';
-import {Giant, olGrizz, giantsKeep, TreasureChest} from './giant.js';
+import {Giant, olGrizz, giantsKeep, TreasureChest, Player, player1, player2, PlayerRoster, gameRoster} from './giant.js';
+import {openChest, gameTurn} from './gameplay.js';
 
 
 let fangs = new Giant ("Fangs");
@@ -18,6 +19,8 @@ function appendTreasureChest(chestID) {
   $('div.giants-keep div.card-wrapper').append(`<div class="treasure-card"><button type="button" name="button" class="chest-button${chestID}">open</button></div>`);
   $(`.giants-keep .card-wrapper .chest-button${chestID}`).click(function() {
       console.log(`Chest ${chestID} was clicked!`);
+      openChest(chestID);
+
     })
 }
 
@@ -30,6 +33,10 @@ function populateChests (keepArray){
 }
 
 
+export function updateGiantStatus(object){
+      $(".giant-status").text(object.sleepLevel);
+}
+
 
 
 
@@ -37,14 +44,16 @@ $(document).ready(function() {
   populateChests(giantsKeep);
   console.log("giantsKeep is below");
   console.log(giantsKeep);
-  $('.bear button').click(function() {
+
+  $('.giant button').click(function() {
     console.log('fed the giant');
     olGrizz.feedGiant();
   })
 
   $('.start button').click(function() {
     console.log('giants start hungry');
-    olGrizz.giantCheck();
+    gameRoster.roster[0].myTurn = true;
+    gameTurn();
   })
 
 

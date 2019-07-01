@@ -1,14 +1,17 @@
+
+import {updateGiantStatus} from './main.js';
+
 export class Giant {
   constructor(name) {
     this.name = name;
-    this.foodlevel = 5;
+    this.sleepLevel = 9;
   }
 
   giantSleep(){
-    this.foodlevel = 10;
-    console.log('sleepy giant: ' + this.foodlevel);
+    this.sleepLevel = 10;
+    console.log('sleepy giant: ' + this.sleepLevel);
     let sleepTimer = setTimeout( ()=>{
-      this.foodlevel--;
+      this.sleepLevel--;
       this.giantCheck();
       clearInterval(sleepTimer);
     }, 5000)
@@ -17,53 +20,90 @@ export class Giant {
   giantCheck(){
     let giantTimer = setInterval( () => {
       console.log("giantcheck");
-      console.log(this.foodlevel);
-      if (this.foodlevel > 0 && this.foodlevel <= 9) {
-        this.foodlevel--;
-      } else if (this.foodlevel >= 10) {
+      console.log(this.sleepLevel);
+      if (this.sleepLevel > 0 && this.sleepLevel <= 9) {
+        this.sleepLevel--;
+      } else if (this.sleepLevel >= 10) {
         this.giantSleep();
         clearInterval(giantTimer);
-      } else if (this.foodlevel === 0) {
-        alert('You dun got eaten by a giant!')
+      } else if (this.sleepLevel === 0) {
+        gameRoster.roster[0].roundGold = 0;
+        gameRoster.turnSwap();
+        console.log(`player gold:${gameRoster.roster[0].roundGold}`);
         clearInterval(giantTimer);
       }
 
+      updateGiantStatus(this);
 
     }, 1000);
   }
 
   feedGiant() {
-    if(this.foodlevel < 10){
-      this.foodlevel ++;
-      console.log('food level: ' + this.foodlevel);
+    if(this.sleepLevel < 10){
+      this.sleepLevel ++;
+      console.log('sleep level: ' + this.sleepLevel);
     }
   }
 
 
 }
 
-////////////////// Player Logic
-
 export class Player{
   constructor(name){
       this.name = name;
-      this.points = 0;
-      this.turn = false;
+      this.totalGold = 0;
+      this.roundGold = 0;
+      this.myTurn = false;
       this.turnID = 1;
-      // this.potions = 0;
   }
 
-  // addPotion(){
-  //   this.potions++;
-  // }
-  //
-  // usePotion(){
-  //   this.potions--;
-  // }
+
+}
+
+
+
+export class PlayerRoster{
+  constructor (){
+    this.roster = [];
+    this.currentTurnID = 0;
+  }
+
+  addPlayer(player){
+    this.roster.push(player)
+  }
+  turnSwap () {
+    if (this.currentTurnID < this.roster.length -1) {
+      this.roster[this.currentTurnID].myTurn = false;
+      this.roster[this.currentTurnID + 1].myTurn = true;
+      olGrizz.sleepLevel = 10;
+      this.currentTurnID ++;
+      console.log('turn swapped');
+      console.log(this.roster[this.currentTurnID]);
+    } else if (this.currentTurnID === this.roster.length -1) {
+      olGrizz.sleepLevel = 10;
+      this.currentTurnID = 0;
+      console.log(this.roster[this.currentTurnID]);
+    } else {
+      console.log('you skipped the step');
+      console.log(this.roster);
+      console.log('currentTurnID is ' + this.currentTurnID);
+      console.log('current roster length ' + (this.roster.length -1));
+    }
+  }
+}
+
+export const player1 = new Player ("Player 1");
+export const player2 = new Player ("Player 2");
+export const gameRoster = new PlayerRoster();
+gameRoster.addPlayer(player1);
+gameRoster.addPlayer(player2);
+console.log(gameRoster)
+
 
 ////////////////// Treasure Logic
 
-}
+
+
 
 export class TreasureChest{
   constructor (chestID){
@@ -83,10 +123,10 @@ export class GiantsKeep {
     this.contents.push(treasure);
   }
 
-  treasureContents(){
+  treasureContents(turnCount){
 
     // let potionChestID = Math.floor( Math.random() *  Math.floor(this.contents.length) );
-    for (let i = 0; i < 9; i++) {
+    for (let i = 0; i < (turnCount*3); i++) {
       let newChest = new TreasureChest(i);
       this.contents.push(newChest);
     }
@@ -97,10 +137,9 @@ export class GiantsKeep {
   }
 }
 
-export const player1 = new Player ("Player 1");
-export const player2 = new Player ("Player 2");
+
 
 export const olGrizz = new Giant ("Ol Grizz");
 export const giantsKeep = new GiantsKeep();
-giantsKeep.treasureContents();
+giantsKeep.treasureContents(player1.turnID);
 console.log(giantsKeep);
