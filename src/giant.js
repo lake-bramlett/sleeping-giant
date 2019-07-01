@@ -27,9 +27,9 @@ export class Giant {
         this.giantSleep();
         clearInterval(giantTimer);
       } else if (this.sleepLevel === 0) {
-        gameRoster.roster[0].roundGold = 0;
+        gameRoster.roster[gameRoster.currentTurnID].roundGold = 0;
         gameRoster.turnSwap();
-        console.log(`player gold:${gameRoster.roster[0].roundGold}`);
+        console.log(`player gold:${gameRoster.roster[gameRoster.currentTurnID].roundGold}`);
         clearInterval(giantTimer);
       }
 

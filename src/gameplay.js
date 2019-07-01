@@ -20,7 +20,7 @@ export function openChest(chestID) {
     olGrizz.sleepLevel-= 5;
     console.log(`Sleep Level : ${olGrizz.sleepLevel}`)
   } else {
-    gameRoster.roster[0].roundGold += giantsKeep.contents[chestID].gold;
-    console.log(`player gold:${gameRoster.roster[0].roundGold}`);
+    gameRoster.roster[gameRoster.currentTurnID].roundGold += giantsKeep.contents[chestID].gold;
+    console.log(`player gold:${gameRoster.roster[gameRoster.currentTurnID].roundGold}`);
   }
 }
